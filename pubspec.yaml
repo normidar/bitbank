@@ -11,9 +11,9 @@ environment:
 name: bitbank
 homepage: https://github.com/normidar/bitbank
 topics:
-  - a
-  - b
-  - c
-  - d
-  - e
+  - api
+  - bitbank
+  - blockchain
+  - finance
+  - exchange
 version: 0.0.1
