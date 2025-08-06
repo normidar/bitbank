@@ -1,0 +1,19 @@
+---
+dependencies: null
+description: "'A pkg in Coin Galaxy.'"
+dev_dependencies:
+  auto_exporter: any
+  build_runner: any
+  test: any
+  very_good_analysis: any
+environment:
+  sdk: ^3.0.0
+name: dart_pkg_temp
+homepage: https://github.com/normidar/dart_pkg_temp
+topics:
+  - a
+  - b
+  - c
+  - d
+  - e
+version: 0.0.1
