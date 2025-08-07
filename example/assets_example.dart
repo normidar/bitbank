@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, document_ignores
+
 import 'package:bitbank/bitbank.dart';
 
 void main() async {
@@ -22,7 +24,7 @@ void main() async {
       print('Locked Amount: ${asset.lockedAmount}');
       print('---');
     }
-  } catch (e) {
+  } on Exception catch (e) {
     print('Error occurred: $e');
   }
 }

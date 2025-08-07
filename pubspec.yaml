@@ -1,10 +1,10 @@
 ---
 dependencies:
-  http: ^1.4.0
   crypto: ^3.0.3
   freezed_annotation: ^3.1.0
+  http: ^1.4.0
   json_annotation: ^4.9.0
-description: "'A pkg in Coin Galaxy.'"
+description: Dart API wrapper for Bitbank.
 dev_dependencies:
   auto_exporter: any
   build_runner: ^2.6.0
@@ -14,8 +14,8 @@ dev_dependencies:
   very_good_analysis: any
 environment:
   sdk: ^3.8.0
-name: bitbank
 homepage: https://github.com/normidar/bitbank
+name: bitbank
 topics:
   - api
   - bitbank

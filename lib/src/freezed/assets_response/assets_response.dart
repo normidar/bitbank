@@ -11,8 +11,9 @@ abstract class AssetsResponse with _$AssetsResponse {
     required AssetsData data,
   }) = _AssetsResponse;
 
-  factory AssetsResponse.fromJson(Map<String, dynamic> json) => _$AssetsResponseFromJson(json);
-const AssetsResponse._();
+  factory AssetsResponse.fromJson(Map<String, dynamic> json) =>
+      _$AssetsResponseFromJson(json);
+  const AssetsResponse._();
 }
 
 @freezed
@@ -21,6 +22,7 @@ abstract class AssetsData with _$AssetsData {
     required List<Asset> assets,
   }) = _AssetsData;
 
-  factory AssetsData.fromJson(Map<String, dynamic> json) => _$AssetsDataFromJson(json);
-const AssetsData._();
+  factory AssetsData.fromJson(Map<String, dynamic> json) =>
+      _$AssetsDataFromJson(json);
+  const AssetsData._();
 }
