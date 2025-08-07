@@ -25,24 +25,16 @@ format: ## Format all code
 # run build
 .PHONY: build
 build: ## Same functionality as `fvm dart run build_runner build` (made available at root level) Usage: `make build`
-	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
-		echo "\033[0;31mPlease provide an app path."; \
-	else \
-		fvm dart run build_runner build --delete-conflicting-outputs; \
-	fi
+	fvm dart run build_runner build --delete-conflicting-outputs
 
 # add_freezed: https://pub.dev/packages/freezed#install
 .PHONY: add_freezed
-add_freezed: ## Add freezed to package: `make add_freezed pkg/my_pkg`
-	if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
-		echo "\033[0;31mPlease provide a path for the package"; \
-	else \
-		$(DART_CMD) pub add freezed_annotation && \
-		$(DART_CMD) pub add dev:build_runner && \
-		$(DART_CMD) pub add dev:freezed && \
-		$(DART_CMD) pub add json_annotation && \
-		$(DART_CMD) pub add dev:json_serializable; \
-	fi
+add_freezed: ## Add freezed to package: `make add_freezed`
+	fvm dart pub add freezed_annotation && \
+	fvm dart pub add dev:build_runner && \
+	fvm dart pub add dev:freezed && \
+	fvm dart pub add json_annotation && \
+	fvm dart pub add dev:json_serializable; \
 
 # git branch clean
 .PHONY: git_branch_clean
@@ -62,12 +54,8 @@ git_create_tag: ## Create a tag: `make git_create_tag <tag_name>`
 
 # git_my_tasks
 .PHONY: git_my_tasks
-git_my_tasks: ## Display my tasks: `make git_my_tasks apps/app_name`
-	if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
-		gh issue ls --assignee @me; \
-	else \
-		gh issue ls --assignee @me --search 'label:$(shell basename $(filter-out $@,$(MAKECMDGOALS)))'; \
-	fi
+git_my_tasks: ## Display my tasks: `make git_my_tasks`
+	gh issue ls --assignee @me
 
 .PHONY: pub_publish_dry_run
 pub_publish_dry_run: ## Dry run for pub publish: `make pub_publish_dry_run`
