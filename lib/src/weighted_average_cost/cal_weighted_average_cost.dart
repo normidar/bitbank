@@ -6,7 +6,7 @@ import 'package:bitbank/src/weighted_average_cost/weighted_average_cost_result.d
 /// [transactions] - List of Transaction objects
 ///
 /// Returns WeightedAverageCostResult with current holdings information
-WeightedAverageCostResult calculateWeightedAverageCost(
+WeightedAverageCostResult calWeightedAverageCost(
   List<Transaction> transactions,
 ) {
   var totalQuantity = 0.0;
@@ -28,7 +28,8 @@ WeightedAverageCostResult calculateWeightedAverageCost(
       totalQuantity = newTotalQuantity;
       averageCost = totalCost / totalQuantity;
     } else {
-      // Sell transaction (negative quantity): reduce quantity but keep average cost unchanged
+      // Sell transaction (negative quantity):
+      // reduce quantity but keep average cost unchanged
       final sellQuantity = -quantity; // Convert to positive for calculations
       if (sellQuantity > totalQuantity) {
         throw ArgumentError('Cannot sell more than current holdings');

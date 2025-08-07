@@ -61,7 +61,6 @@ class Bitbank {
     );
 
     if (response.statusCode == 200) {
-      print(response.body);
       final jsonData = json.decode(response.body) as Map<String, dynamic>;
       return TradeHistoryResponse.fromJson(jsonData);
     } else {

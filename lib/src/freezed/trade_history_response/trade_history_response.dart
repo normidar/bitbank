@@ -1,4 +1,6 @@
 import 'package:bitbank/src/freezed/trade/trade.dart';
+import 'package:bitbank/src/weighted_average_cost/cal_weighted_average_cost.dart';
+import 'package:bitbank/src/weighted_average_cost/weighted_average_cost_result.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'trade_history_response.freezed.dart';
@@ -25,4 +27,14 @@ abstract class TradeHistoryResponse with _$TradeHistoryResponse {
   factory TradeHistoryResponse.fromJson(Map<String, dynamic> json) =>
       _$TradeHistoryResponseFromJson(json);
   const TradeHistoryResponse._();
+
+  WeightedAverageCostResult calculateWeightedAverageCost() {
+    return calWeightedAverageCost(
+      data.trades
+          .map((trade) => trade.toTransaction())
+          .toList()
+          .reversed
+          .toList(),
+    );
+  }
 }

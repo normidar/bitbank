@@ -12,13 +12,15 @@ class Transaction {
 
   final double price;
 
+  @override
+  String toString() {
+    return 'Transaction(quantity: $quantity, price: $price)';
+  }
+
   /// Validates transaction data
   void validate() {
     if (quantity == 0) {
       throw ArgumentError('Quantity cannot be zero');
-    }
-    if (price <= 0) {
-      throw ArgumentError('Price must be greater than 0');
     }
   }
 }

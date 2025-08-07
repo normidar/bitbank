@@ -1,3 +1,4 @@
+import 'package:bitbank/src/weighted_average_cost/transaction.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'trade.freezed.dart';
@@ -25,4 +26,11 @@ abstract class Trade with _$Trade {
 
   factory Trade.fromJson(Map<String, dynamic> json) => _$TradeFromJson(json);
   const Trade._();
+
+  Transaction toTransaction() {
+    return Transaction(
+      quantity: side == 'buy' ? double.parse(amount) : -double.parse(amount),
+      price: double.parse(price),
+    );
+  }
 }
