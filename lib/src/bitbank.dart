@@ -42,6 +42,34 @@ class Bitbank {
     }
   }
 
+  /// Get user trade history
+  Future<TradeHistoryResponse> tradeHistory({required String pair}) async {
+    final nonce = DateTime.now().millisecondsSinceEpoch.toString();
+    final path = '/v1/user/spot/trade_history?pair=$pair';
+    final message = '$nonce$path';
+    final signature = _generateSignature(message);
+
+    final headers = {
+      'ACCESS-KEY': apiKey,
+      'ACCESS-NONCE': nonce,
+      'ACCESS-SIGNATURE': signature,
+    };
+
+    final response = await http.get(
+      Uri.parse('$_baseUrl$path'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body) as Map<String, dynamic>;
+      return TradeHistoryResponse.fromJson(jsonData);
+    } else {
+      throw Exception(
+        'Failed to get trade history: ${response.statusCode} ${response.body}',
+      );
+    }
+  }
+
   /// Generate HMAC-SHA256 signature for authentication
   String _generateSignature(String message) {
     final key = utf8.encode(apiSecret);

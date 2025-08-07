@@ -1,3 +1,8 @@
+## 0.0.2
+
+- Add weighted average cost calculation.
+- Add trade history.
+
 ## 0.0.1
 
 - Initial release.

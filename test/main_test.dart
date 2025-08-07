@@ -19,4 +19,18 @@ void main() {
     final assets = await bitbank.assets();
     expect(assets.data.assets.length, greaterThan(0));
   });
+
+  test('bitbank trade history function creation', () async {
+    // 1 / 6 seconds
+    await Future<void>.delayed(const Duration(milliseconds: 166));
+    final tradeHistory = await bitbank.tradeHistory(pair: 'pol_jpy');
+    // for (final trade in tradeHistory.data.trades) {
+    //   print(trade.toTransaction());
+    // }
+    // final result = tradeHistory.calculateWeightedAverageCost();
+    // print(result.averageCost);
+    // print(result.currentQuantity);
+    // print(result.totalCost);
+    expect(tradeHistory.data.trades.length, greaterThan(0));
+  });
 }
