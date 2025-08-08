@@ -42,6 +42,37 @@ class Bitbank {
     }
   }
 
+  /// Get a specific spot order detail
+  Future<OrderResponse> getOrder({
+    required String pair,
+    required int orderId,
+  }) async {
+    final nonce = DateTime.now().millisecondsSinceEpoch.toString();
+    final path = '/v1/user/spot/order?pair=$pair&order_id=$orderId';
+    final message = '$nonce$path';
+    final signature = _generateSignature(message);
+
+    final headers = {
+      'ACCESS-KEY': apiKey,
+      'ACCESS-NONCE': nonce,
+      'ACCESS-SIGNATURE': signature,
+    };
+
+    final response = await http.get(
+      Uri.parse('$_baseUrl$path'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body) as Map<String, dynamic>;
+      return OrderResponse.fromJson(jsonData);
+    } else {
+      throw Exception(
+        'Failed to get order: ${response.statusCode} ${response.body}',
+      );
+    }
+  }
+
   /// Get user trade history
   Future<TradeHistoryResponse> tradeHistory({required String pair}) async {
     final nonce = DateTime.now().millisecondsSinceEpoch.toString();

@@ -33,4 +33,25 @@ void main() {
     // print(result.totalCost);
     expect(tradeHistory.data.trades.length, greaterThan(0));
   });
+
+  test('bitbank get order function creation', () async {
+    final orderIdEnv = Platform.environment['BITBANK_TEST_ORDER_ID'];
+    final pairEnv = Platform.environment['BITBANK_TEST_PAIR'];
+    if (orderIdEnv == null || pairEnv == null) {
+      // If not provided, treat as a no-op to avoid failing CI environments
+      return;
+    }
+
+    // 1 / 6 seconds
+    await Future<void>.delayed(const Duration(milliseconds: 166));
+    final orderResponse = await bitbank.getOrder(
+      pair: pairEnv,
+      orderId: int.parse(orderIdEnv),
+    );
+    print(orderResponse.data.toJson());
+
+    expect(orderResponse.success, equals(1));
+    expect(orderResponse.data.orderId, equals(int.parse(orderIdEnv)));
+    expect(orderResponse.data.pair, equals(pairEnv));
+  });
 }

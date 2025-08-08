@@ -2,6 +2,8 @@ export 'package:bitbank/src/bitbank.dart';
 export 'package:bitbank/src/freezed/asset/asset.dart';
 export 'package:bitbank/src/freezed/assets_response/assets_response.dart';
 export 'package:bitbank/src/freezed/network_info/network_info.dart';
+export 'package:bitbank/src/freezed/order/order.dart';
+export 'package:bitbank/src/freezed/order/order_response.dart';
 export 'package:bitbank/src/freezed/trade/trade.dart';
 export 'package:bitbank/src/freezed/trade_history_response/trade_history_response.dart';
 export 'package:bitbank/src/freezed/withdrawal_fee/withdrawal_fee.dart';
