@@ -10,7 +10,6 @@ _Order _$OrderFromJson(Map<String, dynamic> json) => _Order(
   orderId: (json['order_id'] as num).toInt(),
   pair: json['pair'] as String,
   side: json['side'] as String,
-  positionSide: json['position_side'] as String?,
   type: json['type'] as String,
   startAmount: json['start_amount'] as String,
   remainingAmount: json['remaining_amount'] as String,
@@ -21,16 +20,16 @@ _Order _$OrderFromJson(Map<String, dynamic> json) => _Order(
   averagePrice: json['average_price'] as String,
   orderedAt: (json['ordered_at'] as num).toInt(),
   expireAt: (json['expire_at'] as num).toInt(),
+  status: json['status'] as String,
+  positionSide: json['position_side'] as String?,
   triggeredAt: (json['triggered_at'] as num?)?.toInt(),
   triggerPrice: json['trigger_price'] as String?,
-  status: json['status'] as String,
 );
 
 Map<String, dynamic> _$OrderToJson(_Order instance) => <String, dynamic>{
   'order_id': instance.orderId,
   'pair': instance.pair,
   'side': instance.side,
-  'position_side': instance.positionSide,
   'type': instance.type,
   'start_amount': instance.startAmount,
   'remaining_amount': instance.remainingAmount,
@@ -41,7 +40,8 @@ Map<String, dynamic> _$OrderToJson(_Order instance) => <String, dynamic>{
   'average_price': instance.averagePrice,
   'ordered_at': instance.orderedAt,
   'expire_at': instance.expireAt,
+  'status': instance.status,
+  'position_side': instance.positionSide,
   'triggered_at': instance.triggeredAt,
   'trigger_price': instance.triggerPrice,
-  'status': instance.status,
 };

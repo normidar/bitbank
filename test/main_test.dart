@@ -34,6 +34,14 @@ void main() {
     expect(tradeHistory.data.trades.length, greaterThan(0));
   });
 
+  test('bitbank status function creation', () async {
+    // 1 / 6 seconds
+    await Future<void>.delayed(const Duration(milliseconds: 166));
+    final statusesResponse = await bitbank.status();
+    expect(statusesResponse.success, equals(1));
+    expect(statusesResponse.data.statuses.length, greaterThan(0));
+  });
+
   test('bitbank get order function creation', () async {
     final orderIdEnv = Platform.environment['BITBANK_TEST_ORDER_ID'];
     final pairEnv = Platform.environment['BITBANK_TEST_PAIR'];
