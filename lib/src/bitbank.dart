@@ -11,8 +11,13 @@ class Bitbank {
   });
 
   static const String _baseUrl = 'https://api.bitbank.cc';
+  static const String _publicBaseUrl = 'https://public.bitbank.cc';
   final String apiKey;
   final String apiSecret;
+
+  // ==========================
+  // Public API (Static Methods)
+  // ==========================
 
   /// Get user assets information
   Future<AssetsResponse> assets() async {
@@ -329,5 +334,70 @@ class Bitbank {
     final hmacSha256 = Hmac(sha256, key);
     final digest = hmacSha256.convert(bytes);
     return digest.toString();
+  }
+
+  /// Get candlestick data for a pair (Public API)
+  /// [candleType] examples: '1min', '5min', '15min', '30min', '1hour', '4hour', '8hour', '12hour', '1day', '1week'
+  /// [yyyymmdd] target date string like '20170401'
+  static Future<CandlestickResponse> candlestick({
+    required String pair,
+    required String candleType,
+    required String yyyymmdd,
+  }) async {
+    final path = '/$pair/candlestick/$candleType/$yyyymmdd';
+    final response = await http.get(Uri.parse('$_publicBaseUrl$path'));
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body) as Map<String, dynamic>;
+      return CandlestickResponse.fromJson(jsonData);
+    }
+    throw Exception(
+      'Failed to get candlestick: ${response.statusCode} ${response.body}',
+    );
+  }
+
+  /// Get order book depth for a pair (Public API)
+  static Future<DepthResponse> depth({required String pair}) async {
+    final path = '/$pair/depth';
+    final response = await http.get(Uri.parse('$_publicBaseUrl$path'));
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body) as Map<String, dynamic>;
+      return DepthResponse.fromJson(jsonData);
+    }
+    throw Exception(
+      'Failed to get depth: ${response.statusCode} ${response.body}',
+    );
+  }
+
+  /// Get latest ticker for a pair (Public API)
+  /// Reference: public API docs
+  static Future<TickerResponse> ticker({required String pair}) async {
+    final path = '/$pair/ticker';
+    final response = await http.get(Uri.parse('$_publicBaseUrl$path'));
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body) as Map<String, dynamic>;
+      return TickerResponse.fromJson(jsonData);
+    }
+    throw Exception(
+      'Failed to get ticker: ${response.statusCode} ${response.body}',
+    );
+  }
+
+  /// Get recent transactions for a pair (Public API)
+  /// If [yyyymmdd] is provided (e.g. '20170401'), fetch for that date
+  static Future<TransactionsResponse> transactions({
+    required String pair,
+    String? yyyymmdd,
+  }) async {
+    final path = yyyymmdd == null
+        ? '/$pair/transactions'
+        : '/$pair/transactions/$yyyymmdd';
+    final response = await http.get(Uri.parse('$_publicBaseUrl$path'));
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body) as Map<String, dynamic>;
+      return TransactionsResponse.fromJson(jsonData);
+    }
+    throw Exception(
+      'Failed to get transactions: ${response.statusCode} ${response.body}',
+    );
   }
 }
