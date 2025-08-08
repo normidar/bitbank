@@ -8,12 +8,15 @@
 
 A comprehensive Dart API wrapper for Bitbank cryptocurrency exchange with built-in weighted average cost calculation functionality.
 
+English | [日本語](README_ja.md)
+
 ## 🚀 Features
 
 - **Complete Bitbank API Integration**: Seamlessly interact with Bitbank's private API
 - **Asset Management**: Retrieve detailed information about your cryptocurrency holdings
 - **Trade History**: Access comprehensive trading history with detailed transaction data
 - **Spot Order Management**: Create/cancel orders, bulk cancel, fetch active orders and orders info
+- **Public Market Data**: Fetch candlesticks, order book depth, tickers, and recent transactions (no API key required)
 - **Weighted Average Cost Calculation**: Built-in functionality to calculate investment cost basis
 - **Type-Safe Models**: Robust data structures using Freezed for immutable, serializable models
 - **HMAC-SHA256 Authentication**: Secure API authentication implementation
@@ -25,7 +28,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  bitbank: ^0.0.1
+  bitbank: ^0.0.2
 ```
 
 Then run:
@@ -144,6 +147,28 @@ final bulkCancelled = await bitbank.cancelOrders(
 );
 ```
 
+### Public Market Data (no API key required)
+
+You can call public endpoints using static methods on `Bitbank`:
+
+```dart
+// Latest ticker
+final ticker = await Bitbank.ticker(pair: 'btc_jpy');
+
+// Candlesticks
+final candles = await Bitbank.candlestick(
+  pair: 'btc_jpy',
+  candleType: '1day',
+  yyyymmdd: '20240101',
+);
+
+// Order book depth
+final depth = await Bitbank.depth(pair: 'btc_jpy');
+
+// Recent transactions (optionally pass date like '20240101')
+final txs = await Bitbank.transactions(pair: 'btc_jpy');
+```
+
 ### Calculate Weighted Average Cost
 
 Automatically calculate the weighted average cost of your investments:
@@ -202,6 +227,8 @@ Run tests:
 ```bash
 dart test
 ```
+
+Note: Bitbank imposes request rate limits. In the integration tests we space calls by ~166ms (≈6 req/sec). Consider adding small delays when chaining multiple private API calls.
 
 ## 📊 Data Models
 
