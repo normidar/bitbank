@@ -3,16 +3,20 @@
 [![GitHub](https://img.shields.io/github/license/normidar/bitbank.svg)](https://github.com/normidar/bitbank/blob/main/LICENSE)
 [![pub package](https://img.shields.io/pub/v/bitbank.svg)](https://pub.dartlang.org/packages/bitbank)
 [![GitHub Stars](https://img.shields.io/github/stars/normidar/bitbank.svg)](https://github.com/normidar/bitbank/stargazers)
-[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/normidar2.svg?style=social&label=Follow%20%40normidar)](https://twitter.com/normidar2)
+[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/normidar2.svg?style=social&label=Follow%20%40normidar2)](https://twitter.com/normidar2)
 [![Github-sponsors](https://img.shields.io/badge/sponsor-30363D?logo=GitHub-Sponsors&logoColor=#EA4AAA)](https://github.com/sponsors/normidar)
 
 A comprehensive Dart API wrapper for Bitbank cryptocurrency exchange with built-in weighted average cost calculation functionality.
+
+English | [日本語](README_ja.md)
 
 ## 🚀 Features
 
 - **Complete Bitbank API Integration**: Seamlessly interact with Bitbank's private API
 - **Asset Management**: Retrieve detailed information about your cryptocurrency holdings
 - **Trade History**: Access comprehensive trading history with detailed transaction data
+- **Spot Order Management**: Create/cancel orders, bulk cancel, fetch active orders and orders info
+- **Public Market Data**: Fetch candlesticks, order book depth, tickers, and recent transactions (no API key required)
 - **Weighted Average Cost Calculation**: Built-in functionality to calculate investment cost basis
 - **Type-Safe Models**: Robust data structures using Freezed for immutable, serializable models
 - **HMAC-SHA256 Authentication**: Secure API authentication implementation
@@ -24,7 +28,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  bitbank: ^0.0.1
+  bitbank: ^0.0.2
 ```
 
 Then run:
@@ -101,6 +105,70 @@ try {
 }
 ```
 
+### Place and Manage Spot Orders
+
+Create, fetch, list, and cancel spot orders:
+
+```dart
+// Create a limit order
+final created = await bitbank.createOrder(
+  pair: 'btc_jpy',
+  side: 'buy',
+  type: 'limit',
+  amount: '0.001',
+  price: '5000000',
+);
+
+// Fetch the created order
+final fetched = await bitbank.getOrder(
+  pair: 'btc_jpy',
+  orderId: created.data.orderId,
+);
+
+// List active orders for a pair
+final activeOrders = await bitbank.getActiveOrders(pair: 'btc_jpy');
+
+// Fetch multiple orders info
+final infoOrders = await bitbank.getOrdersInfo(
+  pair: 'btc_jpy',
+  orderIds: [created.data.orderId],
+);
+
+// Cancel the order
+final cancelled = await bitbank.cancelOrder(
+  pair: 'btc_jpy',
+  orderId: created.data.orderId,
+);
+
+// Bulk cancel orders
+final bulkCancelled = await bitbank.cancelOrders(
+  pair: 'btc_jpy',
+  orderIds: [12345678, 98765432],
+);
+```
+
+### Public Market Data (no API key required)
+
+You can call public endpoints using static methods on `Bitbank`:
+
+```dart
+// Latest ticker
+final ticker = await Bitbank.ticker(pair: 'btc_jpy');
+
+// Candlesticks
+final candles = await Bitbank.candlestick(
+  pair: 'btc_jpy',
+  candleType: '1day',
+  yyyymmdd: '20240101',
+);
+
+// Order book depth
+final depth = await Bitbank.depth(pair: 'btc_jpy');
+
+// Recent transactions (optionally pass date like '20240101')
+final txs = await Bitbank.transactions(pair: 'btc_jpy');
+```
+
 ### Calculate Weighted Average Cost
 
 Automatically calculate the weighted average cost of your investments:
@@ -140,6 +208,27 @@ print('Current Holdings: ${result.currentQuantity} BTC');
 print('Average Cost: ${result.averageCost} JPY per BTC');
 print('Total Investment: ${result.totalCost} JPY');
 ```
+
+## 🧪 Tests
+
+Integration tests are provided and are skipped unless the following environment variables are set (actual orders may be created/cancelled; use with caution):
+
+- `BITBANK_API_KEY`
+- `BITBANK_SECRET`
+- `BITBANK_TEST_PAIR` (e.g. `btc_jpy`)
+- `BITBANK_TEST_ORDER_AMOUNT` (e.g. `0.001`)
+- `BITBANK_TEST_ORDER_PRICE` (e.g. `5000000` for limit orders)
+- `BITBANK_TEST_ORDER_PRICE2` (optional, used for bulk cancel second order)
+- `BITBANK_TEST_SIDE` (optional, default `buy`)
+- `BITBANK_TEST_TYPE` (optional, default `limit`)
+
+Run tests:
+
+```bash
+dart test
+```
+
+Note: Bitbank imposes request rate limits. In the integration tests we space calls by ~166ms (≈6 req/sec). Consider adding small delays when chaining multiple private API calls.
 
 ## 📊 Data Models
 
@@ -191,4 +280,5 @@ If you find this package helpful, please consider:
 
 - [Bitbank Official Website](https://bitbank.cc/)
 - [Bitbank API Documentation](https://github.com/bitbankinc/bitbank-api-docs)
+  - Private/Spot endpoints used in this library, including order creation/cancellation and order queries, follow the official REST API signing rules (HMAC-SHA256 over `nonce + path [+ body]`) as documented here: [Bitbank REST API docs](https://github.com/bitbankinc/bitbank-api-docs/blob/master/rest-api_JP.md)
 - [Package on pub.dev](https://pub.dartlang.org/packages/bitbank)

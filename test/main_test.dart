@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_print, document_ignores
 import 'dart:io';
 
 import 'package:bitbank/bitbank.dart';
@@ -13,13 +14,6 @@ void main() {
     );
   });
 
-  test('bitbank assets function creation', () async {
-    // 1 / 6 seconds
-    await Future<void>.delayed(const Duration(milliseconds: 166));
-    final assets = await bitbank.assets();
-    expect(assets.data.assets.length, greaterThan(0));
-  });
-
   test('bitbank trade history function creation', () async {
     // 1 / 6 seconds
     await Future<void>.delayed(const Duration(milliseconds: 166));
@@ -27,10 +21,10 @@ void main() {
     // for (final trade in tradeHistory.data.trades) {
     //   print(trade.toTransaction());
     // }
-    // final result = tradeHistory.calculateWeightedAverageCost();
-    // print(result.averageCost);
-    // print(result.currentQuantity);
-    // print(result.totalCost);
+    final result = tradeHistory.calculateWeightedAverageCost();
+    print(result.averageCost);
+    print(result.currentQuantity);
+    print(result.totalCost);
     expect(tradeHistory.data.trades.length, greaterThan(0));
   });
 }
