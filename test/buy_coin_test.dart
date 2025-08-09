@@ -24,7 +24,7 @@ void main() {
       pair: pair,
       side: 'buy',
       type: 'limit',
-      amount: '1',
+      amount: '10',
       postOnly: true,
       price: buyPrice,
     );
