@@ -61,6 +61,10 @@ git_my_tasks: ## Display my tasks: `make git_my_tasks`
 pub_publish_dry_run: ## Dry run for pub publish: `make pub_publish_dry_run`
 	fvm dart pub publish --dry-run
 
+.PHONY: pub_publish
+pub_publish: ## Publish to pub.dev: `make pub_publish`
+	fvm dart pub publish
+
 .PHONY: add_dependency
 add_dependency: ## Add a dependency to the package: `make add_dependency <dependency_name>`
 	if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
