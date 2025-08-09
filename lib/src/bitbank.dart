@@ -60,7 +60,7 @@ class Bitbank {
       'order_id': orderId,
     };
     final body = json.encode(payload);
-    final message = '$nonce$path$body';
+    final message = '$nonce$body';
     final signature = _generateSignature(message);
 
     final headers = {
@@ -155,7 +155,7 @@ class Bitbank {
     }..removeWhere((key, value) => value == null);
 
     final body = json.encode(payload);
-    final message = '$nonce$path$body';
+    final message = '$nonce$body';
     final signature = _generateSignature(message);
 
     final headers = {
@@ -165,8 +165,9 @@ class Bitbank {
       'Content-Type': 'application/json',
     };
 
+    final url = Uri.parse('$_baseUrl$path');
     final response = await http.post(
-      Uri.parse('$_baseUrl$path'),
+      url,
       headers: headers,
       body: body,
     );
@@ -337,7 +338,8 @@ class Bitbank {
   }
 
   /// Get candlestick data for a pair (Public API)
-  /// [candleType] examples: '1min', '5min', '15min', '30min', '1hour', '4hour', '8hour', '12hour', '1day', '1week'
+  /// [candleType] examples: '1min', '5min', '15min', '30min', '1hour',
+  /// '4hour', '8hour', '12hour', '1day', '1week'
   /// [yyyymmdd] target date string like '20170401'
   static Future<CandlestickResponse> candlestick({
     required String pair,
