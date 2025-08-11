@@ -1,3 +1,7 @@
+## 0.0.4
+
+- Add CoinType feature.
+
 ## 0.0.3
 
 - Order feature.

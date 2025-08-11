@@ -17,6 +17,7 @@ export 'package:bitbank/src/freezed/trade/trade.dart';
 export 'package:bitbank/src/freezed/trade_history_response/trade_history_response.dart';
 export 'package:bitbank/src/freezed/transactions_response/transactions_response.dart';
 export 'package:bitbank/src/freezed/withdrawal_fee/withdrawal_fee.dart';
+export 'package:bitbank/src/utils/coin_type.dart';
 export 'package:bitbank/src/weighted_average_cost/cal_weighted_average_cost.dart';
 export 'package:bitbank/src/weighted_average_cost/transaction.dart';
 export 'package:bitbank/src/weighted_average_cost/weighted_average_cost_result.dart';

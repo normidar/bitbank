@@ -66,7 +66,7 @@ print(assetsResponse.data.assets.length);
 ### 取引履歴を取得
 
 ```dart
-final tradeHistory = await bitbank.tradeHistory(pair: 'btc_jpy');
+final tradeHistory = await bitbank.tradeHistory(coinType: CoinType.btc);
 print(tradeHistory.data.trades.length);
 ```
 
@@ -75,7 +75,7 @@ print(tradeHistory.data.trades.length);
 ```dart
 // 指値注文を作成
 final created = await bitbank.createOrder(
-  pair: 'btc_jpy',
+  coinType: CoinType.btc,
   side: 'buy',
   type: 'limit',
   amount: '0.001',
@@ -84,28 +84,28 @@ final created = await bitbank.createOrder(
 
 // 単一注文を取得
 final fetched = await bitbank.getOrder(
-  pair: 'btc_jpy',
+  coinType: CoinType.btc,
   orderId: created.data.orderId,
 );
 
 // アクティブ注文一覧
-final activeOrders = await bitbank.getActiveOrders(pair: 'btc_jpy');
+final activeOrders = await bitbank.getActiveOrders(coinType: CoinType.btc);
 
 // 複数注文情報
 final infoOrders = await bitbank.getOrdersInfo(
-  pair: 'btc_jpy',
+  coinType: CoinType.btc,
   orderIds: [created.data.orderId],
 );
 
 // 注文キャンセル
 final cancelled = await bitbank.cancelOrder(
-  pair: 'btc_jpy',
+  coinType: CoinType.btc,
   orderId: created.data.orderId,
 );
 
 // まとめてキャンセル
 final bulkCancelled = await bitbank.cancelOrders(
-  pair: 'btc_jpy',
+  coinType: CoinType.btc,
   orderIds: [12345678, 98765432],
 );
 ```
@@ -114,26 +114,26 @@ final bulkCancelled = await bitbank.cancelOrders(
 
 ```dart
 // 最新ティッカー
-final ticker = await Bitbank.ticker(pair: 'btc_jpy');
+final ticker = await Bitbank.ticker(coinType: CoinType.btc);
 
 // ローソク足
 final candles = await Bitbank.candlestick(
-  pair: 'btc_jpy',
+  coinType: CoinType.btc,
   candleType: '1day',
   yyyymmdd: '20240101',
 );
 
 // 板（Depth）
-final depth = await Bitbank.depth(pair: 'btc_jpy');
+final depth = await Bitbank.depth(coinType: CoinType.btc);
 
 // 約定履歴（任意で '20240101' のような日付指定可能）
-final txs = await Bitbank.transactions(pair: 'btc_jpy');
+final txs = await Bitbank.transactions(coinType: CoinType.btc);
 ```
 
 ### 加重平均取得単価（自動）
 
 ```dart
-final tradeHistory = await bitbank.tradeHistory(pair: 'btc_jpy');
+final tradeHistory = await bitbank.tradeHistory(coinType: CoinType.btc);
 final result = tradeHistory.calculateWeightedAverageCost();
 print(result.averageCost);
 print(result.currentQuantity);

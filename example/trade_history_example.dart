@@ -11,7 +11,9 @@ void main() async {
 
   try {
     // Call the tradeHistory function to get user trade history
-    final tradeHistoryResponse = await bitbank.tradeHistory(pair: 'btc_jpy');
+    final tradeHistoryResponse = await bitbank.tradeHistory(
+      coinType: CoinType.btc,
+    );
 
     print('Success: ${tradeHistoryResponse.success}');
     print('Number of trades: ${tradeHistoryResponse.data.trades.length}');

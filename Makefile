@@ -39,8 +39,15 @@ add_freezed: ## Add freezed to package: `make add_freezed`
 # git branch clean
 .PHONY: git_branch_clean
 git_branch_clean: ## Delete local branches that don't exist on remote
-	chmod u+x sh_scripts/git_branch_clean.sh && \
-	./sh_scripts/git_branch_clean.sh
+	git fetch -p && \
+	current_branch=$$(git branch --show-current) && \
+	for branch in $$(git branch | sed 's/..//'); do \
+		if [ "$$branch" != "$$current_branch" ]; then \
+			if ! git show-ref --quiet refs/remotes/origin/$$branch; then \
+				git branch -D "$$branch"; \
+			fi; \
+		fi; \
+	done
 
 # git_create_tag
 .PHONY: git_create_tag
