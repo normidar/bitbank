@@ -49,14 +49,14 @@ class Bitbank {
 
   /// Cancel a specific spot order
   Future<OrderResponse> cancelOrder({
-    required String pair,
+    required CoinType coinType,
     required int orderId,
   }) async {
     final nonce = DateTime.now().millisecondsSinceEpoch.toString();
     const path = '/v1/user/spot/cancel_order';
 
     final payload = <String, dynamic>{
-      'pair': pair,
+      'pair': '${coinType.name}_jpy',
       'order_id': orderId,
     };
     final body = json.encode(payload);
@@ -88,14 +88,14 @@ class Bitbank {
 
   /// Cancel multiple spot orders at once
   Future<List<Order>> cancelOrders({
-    required String pair,
+    required CoinType coinType,
     required List<int> orderIds,
   }) async {
     final nonce = DateTime.now().millisecondsSinceEpoch.toString();
     const path = '/v1/user/spot/cancel_orders';
 
     final payload = <String, dynamic>{
-      'pair': pair,
+      'pair': '${coinType.name}_jpy',
       'order_ids': orderIds,
     };
     final body = json.encode(payload);
@@ -131,7 +131,7 @@ class Bitbank {
 
   /// Create a new spot order
   Future<OrderResponse> createOrder({
-    required String pair,
+    required CoinType coinType,
     required String side, // 'buy' or 'sell'
     required String type, // 'limit', 'market', 'stop', etc.
     required String amount,
@@ -144,7 +144,7 @@ class Bitbank {
     const path = '/v1/user/spot/order';
 
     final payload = <String, dynamic>{
-      'pair': pair,
+      'pair': '${coinType.name}_jpy',
       'side': side,
       'type': type,
       'amount': amount,
@@ -183,9 +183,9 @@ class Bitbank {
   }
 
   /// Get active spot orders for a pair
-  Future<List<Order>> getActiveOrders({required String pair}) async {
+  Future<List<Order>> getActiveOrders({required CoinType coinType}) async {
     final nonce = DateTime.now().millisecondsSinceEpoch.toString();
-    final path = '/v1/user/spot/active_orders?pair=$pair';
+    final path = '/v1/user/spot/active_orders?pair=${coinType.name}_jpy';
     final message = '$nonce$path';
     final signature = _generateSignature(message);
 
@@ -216,11 +216,12 @@ class Bitbank {
 
   /// Get a specific spot order detail
   Future<OrderResponse> getOrder({
-    required String pair,
+    required CoinType coinType,
     required int orderId,
   }) async {
     final nonce = DateTime.now().millisecondsSinceEpoch.toString();
-    final path = '/v1/user/spot/order?pair=$pair&order_id=$orderId';
+    final path =
+        '/v1/user/spot/order?pair=${coinType.name}_jpy&order_id=$orderId';
     final message = '$nonce$path';
     final signature = _generateSignature(message);
 
@@ -247,13 +248,13 @@ class Bitbank {
 
   /// Get multiple spot orders information
   Future<List<Order>> getOrdersInfo({
-    required String pair,
+    required CoinType coinType,
     required List<int> orderIds,
   }) async {
     final orderIdsParam = orderIds.join(',');
     final nonce = DateTime.now().millisecondsSinceEpoch.toString();
     final path =
-        '/v1/user/spot/orders_info?pair=$pair&order_ids=$orderIdsParam';
+        '/v1/user/spot/orders_info?pair=${coinType.name}_jpy&order_ids=$orderIdsParam';
     final message = '$nonce$path';
     final signature = _generateSignature(message);
 
@@ -301,9 +302,11 @@ class Bitbank {
   }
 
   /// Get user trade history
-  Future<TradeHistoryResponse> tradeHistory({required String pair}) async {
+  Future<TradeHistoryResponse> tradeHistory({
+    required CoinType coinType,
+  }) async {
     final nonce = DateTime.now().millisecondsSinceEpoch.toString();
-    final path = '/v1/user/spot/trade_history?pair=$pair';
+    final path = '/v1/user/spot/trade_history?pair=${coinType.name}_jpy';
     final message = '$nonce$path';
     final signature = _generateSignature(message);
 
@@ -342,11 +345,11 @@ class Bitbank {
   /// '4hour', '8hour', '12hour', '1day', '1week'
   /// [yyyymmdd] target date string like '20170401'
   static Future<CandlestickResponse> candlestick({
-    required String pair,
+    required CoinType coinType,
     required String candleType,
     required String yyyymmdd,
   }) async {
-    final path = '/$pair/candlestick/$candleType/$yyyymmdd';
+    final path = '/${coinType.name}_jpy/candlestick/$candleType/$yyyymmdd';
     final response = await http.get(Uri.parse('$_publicBaseUrl$path'));
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body) as Map<String, dynamic>;
@@ -358,8 +361,8 @@ class Bitbank {
   }
 
   /// Get order book depth for a pair (Public API)
-  static Future<DepthResponse> depth({required String pair}) async {
-    final path = '/$pair/depth';
+  static Future<DepthResponse> depth({required CoinType coinType}) async {
+    final path = '/${coinType.name}_jpy/depth';
     final response = await http.get(Uri.parse('$_publicBaseUrl$path'));
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body) as Map<String, dynamic>;
@@ -372,8 +375,8 @@ class Bitbank {
 
   /// Get latest ticker for a pair (Public API)
   /// Reference: public API docs
-  static Future<TickerResponse> ticker({required String pair}) async {
-    final path = '/$pair/ticker';
+  static Future<TickerResponse> ticker({required CoinType coinType}) async {
+    final path = '/${coinType.name}_jpy/ticker';
     final response = await http.get(Uri.parse('$_publicBaseUrl$path'));
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body) as Map<String, dynamic>;
@@ -387,12 +390,11 @@ class Bitbank {
   /// Get recent transactions for a pair (Public API)
   /// If [yyyymmdd] is provided (e.g. '20170401'), fetch for that date
   static Future<TransactionsResponse> transactions({
-    required String pair,
+    required CoinType coinType,
     String? yyyymmdd,
   }) async {
-    final path = yyyymmdd == null
-        ? '/$pair/transactions'
-        : '/$pair/transactions/$yyyymmdd';
+    final base = '/${coinType.name}_jpy/transactions';
+    final path = yyyymmdd == null ? base : '$base/$yyyymmdd';
     final response = await http.get(Uri.parse('$_publicBaseUrl$path'));
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body) as Map<String, dynamic>;

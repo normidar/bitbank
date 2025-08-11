@@ -2,7 +2,7 @@
 
 import 'dart:io';
 
-import 'package:bitbank/src/bitbank.dart';
+import 'package:bitbank/bitbank.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -16,12 +16,11 @@ void main() {
   });
 
   test('buy coin', () async {
-    const pair = 'doge_jpy';
-    final price = await Bitbank.ticker(pair: pair);
+    final price = await Bitbank.ticker(coinType: CoinType.doge);
     await Future<void>.delayed(const Duration(seconds: 1));
     final buyPrice = price.data.buy;
     final order = await bitbank.createOrder(
-      pair: pair,
+      coinType: CoinType.doge,
       side: 'buy',
       type: 'limit',
       amount: '10',

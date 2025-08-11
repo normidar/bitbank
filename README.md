@@ -86,7 +86,7 @@ Access your trading history for specific currency pairs:
 
 ```dart
 try {
-  final tradeHistory = await bitbank.tradeHistory(pair: 'btc_jpy');
+  final tradeHistory = await bitbank.tradeHistory(coinType: CoinType.btc);
 
   print('Number of trades: ${tradeHistory.data.trades.length}');
 
@@ -112,7 +112,7 @@ Create, fetch, list, and cancel spot orders:
 ```dart
 // Create a limit order
 final created = await bitbank.createOrder(
-  pair: 'btc_jpy',
+  coinType: CoinType.btc,
   side: 'buy',
   type: 'limit',
   amount: '0.001',
@@ -121,28 +121,28 @@ final created = await bitbank.createOrder(
 
 // Fetch the created order
 final fetched = await bitbank.getOrder(
-  pair: 'btc_jpy',
+  coinType: CoinType.btc,
   orderId: created.data.orderId,
 );
 
 // List active orders for a pair
-final activeOrders = await bitbank.getActiveOrders(pair: 'btc_jpy');
+final activeOrders = await bitbank.getActiveOrders(coinType: CoinType.btc);
 
 // Fetch multiple orders info
 final infoOrders = await bitbank.getOrdersInfo(
-  pair: 'btc_jpy',
+  coinType: CoinType.btc,
   orderIds: [created.data.orderId],
 );
 
 // Cancel the order
 final cancelled = await bitbank.cancelOrder(
-  pair: 'btc_jpy',
+  coinType: CoinType.btc,
   orderId: created.data.orderId,
 );
 
 // Bulk cancel orders
 final bulkCancelled = await bitbank.cancelOrders(
-  pair: 'btc_jpy',
+  coinType: CoinType.btc,
   orderIds: [12345678, 98765432],
 );
 ```
@@ -153,20 +153,20 @@ You can call public endpoints using static methods on `Bitbank`:
 
 ```dart
 // Latest ticker
-final ticker = await Bitbank.ticker(pair: 'btc_jpy');
+final ticker = await Bitbank.ticker(coinType: CoinType.btc);
 
 // Candlesticks
 final candles = await Bitbank.candlestick(
-  pair: 'btc_jpy',
+  coinType: CoinType.btc,
   candleType: '1day',
   yyyymmdd: '20240101',
 );
 
 // Order book depth
-final depth = await Bitbank.depth(pair: 'btc_jpy');
+final depth = await Bitbank.depth(coinType: CoinType.btc);
 
 // Recent transactions (optionally pass date like '20240101')
-final txs = await Bitbank.transactions(pair: 'btc_jpy');
+final txs = await Bitbank.transactions(coinType: CoinType.btc);
 ```
 
 ### Calculate Weighted Average Cost
@@ -175,7 +175,7 @@ Automatically calculate the weighted average cost of your investments:
 
 ```dart
 try {
-  final tradeHistory = await bitbank.tradeHistory(pair: 'btc_jpy');
+  final tradeHistory = await bitbank.tradeHistory(coinType: CoinType.btc);
 
   // Calculate weighted average cost from trade history
   final result = tradeHistory.calculateWeightedAverageCost();
