@@ -17,7 +17,21 @@ void main(List<String> args) async {
         final assets = await bitbank.assets();
         for (final asset in assets.data.assets) {
           if (double.parse(asset.onhandAmount) > 0) {
-            print('${asset.asset}: ${asset.onhandAmount}');
+            if (asset.asset != 'jpy') {
+              await Future<void>.delayed(const Duration(milliseconds: 160));
+              final price = await Bitbank.ticker(
+                coinType: CoinType.values.firstWhere(
+                  (e) => e.name == asset.asset,
+                ),
+              );
+              final lastPrice = price.data.last;
+              final yen =
+                  (double.parse(asset.onhandAmount) * double.parse(lastPrice))
+                      .toStringAsFixed(4);
+              print('${asset.asset}: $yen ${asset.onhandAmount}');
+            } else {
+              print('${asset.asset}: ${asset.onhandAmount}');
+            }
           }
         }
         return;
@@ -69,7 +83,28 @@ void main(List<String> args) async {
           );
         }
         return;
+      } else if (param == 'clean') {
+        final coinType = CoinType.values.firstWhere((e) => e.name == args[1]);
+        final orders = await bitbank.getActiveOrders(coinType: coinType);
+        for (final order in orders) {
+          await bitbank.cancelOrder(
+            coinType: coinType,
+            orderId: order.orderId,
+          );
+        }
       }
+    case 3:
+      final param = args.first;
+      if (param == 'cancel') {
+        final coinType = CoinType.values.firstWhere((e) => e.name == args[1]);
+        final orderId = args[2];
+        final order = await bitbank.cancelOrder(
+          coinType: coinType,
+          orderId: int.parse(orderId),
+        );
+        print(order);
+      }
+
     case 4: // sell pol 1000000 37.612
       assert(args[0] == 'buy' || args[0] == 'sell', 'Invalid command');
       final command = args[0];
