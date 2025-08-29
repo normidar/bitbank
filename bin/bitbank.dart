@@ -5,23 +5,18 @@ import 'dart:io';
 import 'package:bitbank/bitbank.dart';
 
 void main(List<String> args) async {
-  final bitbank = Bitbank(
-    apiKey: Platform.environment['BITBANK_API_KEY']!,
-    apiSecret: Platform.environment['BITBANK_SECRET']!,
-  );
-
   switch (args.length) {
     case 1:
       final param = args.first;
       if (param == 'assets') {
-        final assets = await bitbank.assets();
+        final assets = await bitbank().assets();
         for (final asset in assets.data.assets) {
           if (double.parse(asset.onhandAmount) > 0) {
             if (asset.asset != 'jpy') {
               final coinType = CoinType.values.firstWhere(
                 (e) => e.name == asset.asset,
               );
-              final trades = await bitbank.tradeHistory(coinType: coinType);
+              final trades = await bitbank().tradeHistory(coinType: coinType);
               final averagePrice = trades
                   .calculateWeightedAverageCost()
                   .averageCost
@@ -76,7 +71,7 @@ void main(List<String> args) async {
       final param = args.first;
       if (param == 'orders') {
         final coinType = CoinType.values.firstWhere((e) => e.name == args[1]);
-        final orders = await bitbank.getActiveOrders(coinType: coinType);
+        final orders = await bitbank().getActiveOrders(coinType: coinType);
         for (final order in orders) {
           final executedPrice =
               (double.parse(order.price) * double.parse(order.executedAmount))
@@ -93,9 +88,9 @@ void main(List<String> args) async {
         return;
       } else if (param == 'clean') {
         final coinType = CoinType.values.firstWhere((e) => e.name == args[1]);
-        final orders = await bitbank.getActiveOrders(coinType: coinType);
+        final orders = await bitbank().getActiveOrders(coinType: coinType);
         for (final order in orders) {
-          await bitbank.cancelOrder(
+          await bitbank().cancelOrder(
             coinType: coinType,
             orderId: order.orderId,
           );
@@ -106,7 +101,7 @@ void main(List<String> args) async {
       if (param == 'cancel') {
         final coinType = CoinType.values.firstWhere((e) => e.name == args[1]);
         final orderId = args[2];
-        final order = await bitbank.cancelOrder(
+        final order = await bitbank().cancelOrder(
           coinType: coinType,
           orderId: int.parse(orderId),
         );
@@ -122,7 +117,7 @@ void main(List<String> args) async {
       final amount = (double.parse(amountYen) / double.parse(price))
           .toStringAsFixed(4);
 
-      final order = await bitbank.createOrder(
+      final order = await bitbank().createOrder(
         coinType: coinType,
         side: command,
         type: 'limit',
@@ -132,7 +127,7 @@ void main(List<String> args) async {
       );
       while (true) {
         await Future<void>.delayed(const Duration(seconds: 1));
-        final orderStatus = await bitbank.getOrder(
+        final orderStatus = await bitbank().getOrder(
           coinType: coinType,
           orderId: order.data.orderId,
         );
@@ -147,4 +142,11 @@ void main(List<String> args) async {
     default:
       print('Invalid arguments');
   }
+}
+
+Bitbank bitbank() {
+  return Bitbank(
+    apiKey: Platform.environment['BITBANK_API_KEY']!,
+    apiSecret: Platform.environment['BITBANK_SECRET']!,
+  );
 }
