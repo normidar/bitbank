@@ -1,3 +1,7 @@
+## 0.0.5
+
+- Add bin features.
+
 ## 0.0.4
 
 - Add CoinType feature.
