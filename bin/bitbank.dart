@@ -18,17 +18,25 @@ void main(List<String> args) async {
         for (final asset in assets.data.assets) {
           if (double.parse(asset.onhandAmount) > 0) {
             if (asset.asset != 'jpy') {
+              final coinType = CoinType.values.firstWhere(
+                (e) => e.name == asset.asset,
+              );
+              final trades = await bitbank.tradeHistory(coinType: coinType);
+              final averagePrice = trades
+                  .calculateWeightedAverageCost()
+                  .averageCost
+                  .toStringAsFixed(3);
               await Future<void>.delayed(const Duration(milliseconds: 160));
               final price = await Bitbank.ticker(
-                coinType: CoinType.values.firstWhere(
-                  (e) => e.name == asset.asset,
-                ),
+                coinType: coinType,
               );
               final lastPrice = price.data.last;
               final yen =
                   (double.parse(asset.onhandAmount) * double.parse(lastPrice))
                       .toStringAsFixed(4);
-              print('${asset.asset}: $yen ${asset.onhandAmount}');
+              print(
+                '${asset.asset}: $yen ${asset.onhandAmount} average:$averagePrice',
+              );
             } else {
               print('${asset.asset}: ${asset.onhandAmount}');
             }
