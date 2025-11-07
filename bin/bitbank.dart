@@ -102,6 +102,8 @@ void main(List<String> args) async {
           final coinType = CoinType.values.firstWhere((e) => e.name == args[1]);
           final orders = await bitbank().getActiveOrders(coinType: coinType);
           for (final order in orders) {
+            await Future<void>.delayed(const Duration(milliseconds: 100));
+            print('cancel order: ${order.orderId}');
             await bitbank().cancelOrder(
               coinType: coinType,
               orderId: order.orderId,
@@ -115,7 +117,7 @@ void main(List<String> args) async {
           print('jpyAmount: $jpyAmount');
 
           // 1 / 40
-          final gridAmount = (double.parse(jpyAmount) / 40)
+          final gridAmount = (double.parse(jpyAmount) / 60)
               .truncate()
               .toString();
           print('gridAmount: $gridAmount');
@@ -125,8 +127,8 @@ void main(List<String> args) async {
           final lastPrice = price.data.buy;
           print('lastPrice: $lastPrice');
 
-          const gridCount = 25;
-          const gridRate = 0.1;
+          const gridCount = 30;
+          const gridRate = 0.15;
 
           // 20% を 40分で下がるとすると、1分あたりの下がり幅を計算する
           final priceList = List.filled(gridCount, lastPrice);
