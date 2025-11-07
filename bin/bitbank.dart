@@ -95,7 +95,7 @@ void main(List<String> args) async {
             );
           }
           return;
-        case 'grid':
+        case 'grid': // grid pol
           // グリッド購入をセットする（全部のお金を40分にして20%下がるまでの分を設置する）
           final coinType = CoinType.values.firstWhere((e) => e.name == args[1]);
           final orders = await bitbank().getActiveOrders(coinType: coinType);
@@ -107,6 +107,58 @@ void main(List<String> args) async {
           }
           // 使えるお金を確認する
           final assets = await bitbank().assets();
+          final jpyAmount = assets.data.assets
+              .firstWhere((test) => test.asset == 'jpy')
+              .freeAmount;
+          print('jpyAmount: $jpyAmount');
+
+          // 1 / 40
+          final gridAmount = (double.parse(jpyAmount) / 40)
+              .truncate()
+              .toString();
+          print('gridAmount: $gridAmount');
+
+          // 今の価格を確認する
+          final price = await Bitbank.ticker(coinType: coinType);
+          final lastPrice = price.data.last;
+          print('lastPrice: $lastPrice');
+
+          const gridCount = 25;
+          const gridRate = 0.1;
+
+          // 20% を 40分で下がるとすると、1分あたりの下がり幅を計算する
+          final priceList = List.filled(gridCount, lastPrice);
+          for (var i = 0; i < gridCount; i++) {
+            priceList[i] =
+                (double.parse(lastPrice) *
+                        (1 - (1 * (gridRate / gridCount * (i + 1)))))
+                    .toStringAsFixed(3);
+          }
+          print('priceList: $priceList');
+
+          Future<void> buy({
+            required String price,
+            required String moneyAmount,
+          }) async {
+            final amount = (double.parse(moneyAmount) / double.parse(price))
+                .toStringAsFixed(4);
+            final order = await bitbank().createOrder(
+              coinType: coinType,
+              side: 'buy',
+              type: 'limit',
+              amount: amount,
+              postOnly: true,
+              price: price,
+            );
+            print('order: $order');
+          }
+
+          for (final price in priceList) {
+            await Future<void>.delayed(const Duration(milliseconds: 500));
+            await buy(price: price, moneyAmount: gridAmount);
+          }
+          print('done');
+
           return;
         case 'transactions':
           final coinType = CoinType.values.firstWhere((e) => e.name == args[1]);
