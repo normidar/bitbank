@@ -22,9 +22,7 @@ void main(List<String> args) async {
                   .averageCost
                   .toStringAsFixed(3);
               await Future<void>.delayed(const Duration(milliseconds: 160));
-              final price = await Bitbank.ticker(
-                coinType: coinType,
-              );
+              final price = await Bitbank.ticker(coinType: coinType);
               final lastPrice = price.data.last;
               final yen =
                   (double.parse(asset.onhandAmount) * double.parse(lastPrice))
@@ -69,32 +67,80 @@ void main(List<String> args) async {
       }
     case 2:
       final param = args.first;
-      if (param == 'orders') {
-        final coinType = CoinType.values.firstWhere((e) => e.name == args[1]);
-        final orders = await bitbank().getActiveOrders(coinType: coinType);
-        for (final order in orders) {
-          final executedPrice =
-              (double.parse(order.price) * double.parse(order.executedAmount))
-                  .toStringAsFixed(0);
-          final startPrice =
-              (double.parse(order.price) * double.parse(order.startAmount))
-                  .toStringAsFixed(0);
-          print(
-            '${order.orderId} ${order.price}¥ '
-            '${order.side} amount:${order.executedAmount}/${order.startAmount} '
-            'price:$executedPrice¥/$startPrice¥',
-          );
-        }
-        return;
-      } else if (param == 'clean') {
-        final coinType = CoinType.values.firstWhere((e) => e.name == args[1]);
-        final orders = await bitbank().getActiveOrders(coinType: coinType);
-        for (final order in orders) {
-          await bitbank().cancelOrder(
-            coinType: coinType,
-            orderId: order.orderId,
-          );
-        }
+      switch (param) {
+        case 'orders':
+          final coinType = CoinType.values.firstWhere((e) => e.name == args[1]);
+          final orders = await bitbank().getActiveOrders(coinType: coinType);
+          for (final order in orders) {
+            final executedPrice =
+                (double.parse(order.price) * double.parse(order.executedAmount))
+                    .toStringAsFixed(0);
+            final startPrice =
+                (double.parse(order.price) * double.parse(order.startAmount))
+                    .toStringAsFixed(0);
+            print(
+              '${order.orderId} ${order.price}¥ '
+              '${order.side} amount:${order.executedAmount}/${order.startAmount} '
+              'price:$executedPrice¥/$startPrice¥',
+            );
+          }
+          return;
+        case 'clean':
+          final coinType = CoinType.values.firstWhere((e) => e.name == args[1]);
+          final orders = await bitbank().getActiveOrders(coinType: coinType);
+          for (final order in orders) {
+            await bitbank().cancelOrder(
+              coinType: coinType,
+              orderId: order.orderId,
+            );
+          }
+          return;
+        case 'grid':
+          // グリッド購入をセットする（全部のお金を40分にして20%下がるまでの分を設置する）
+          final coinType = CoinType.values.firstWhere((e) => e.name == args[1]);
+          final orders = await bitbank().getActiveOrders(coinType: coinType);
+          for (final order in orders) {
+            await bitbank().cancelOrder(
+              coinType: coinType,
+              orderId: order.orderId,
+            );
+          }
+          // 使えるお金を確認する
+          final assets = await bitbank().assets();
+          return;
+        case 'transactions':
+          final coinType = CoinType.values.firstWhere((e) => e.name == args[1]);
+          while (true) {
+            double totalSell = 0;
+            double totalBuy = 0;
+            final transactions = await Bitbank.transactions(
+              coinType: coinType,
+              // yyyymmdd: '20250906',
+            );
+            for (final transaction in transactions.data.transactions.reversed) {
+              print('---');
+              print(
+                DateTime.fromMillisecondsSinceEpoch(transaction.executedAt),
+              );
+              print(transaction.side);
+              print('price: ${transaction.price}');
+              print('amount: ${transaction.amount}');
+              final total =
+                  double.parse(transaction.price) *
+                  double.parse(transaction.amount);
+              print('total: ${total.toStringAsFixed(4)}');
+              if (transaction.side == 'sell') {
+                totalSell += total;
+              } else {
+                totalBuy += total;
+              }
+            }
+            print('--------------------------------');
+            print('count: ${transactions.data.transactions.length}');
+            print('totalS: ${totalSell.toStringAsFixed(4)}');
+            print('totalB: ${totalBuy.toStringAsFixed(4)}');
+            await Future<void>.delayed(const Duration(seconds: 1));
+          }
       }
     case 3:
       final param = args.first;
