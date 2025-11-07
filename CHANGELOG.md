@@ -1,3 +1,8 @@
+## 0.0.7
+
+- Add grid feature to bin.
+- Fix bug for order feature.
+
 ## 0.0.6
 
 - Fix bug for bin features.
