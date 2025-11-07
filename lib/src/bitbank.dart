@@ -174,7 +174,15 @@ class Bitbank {
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body) as Map<String, dynamic>;
-      return OrderResponse.fromJson(jsonData);
+      try {
+        final rt = OrderResponse.fromJson(jsonData);
+        return rt;
+      } catch (e) {
+        print(
+          'Failed to create order: ${response.statusCode} ${response.body} $e, See: https://github.com/bitbankinc/bitbank-api-docs/blob/master/errors.md',
+        );
+        rethrow;
+      }
     } else {
       throw Exception(
         'Failed to create order: ${response.statusCode} ${response.body}',

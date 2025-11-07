@@ -17,7 +17,7 @@ void main() {
   test('bitbank trade history function creation', () async {
     // 1 / 6 seconds
     await Future<void>.delayed(const Duration(milliseconds: 166));
-    final tradeHistory = await bitbank.tradeHistory(coinType: CoinType.pol);
+    final tradeHistory = await bitbank.tradeHistory(coinType: CoinType.dai);
     // for (final trade in tradeHistory.data.trades) {
     //   print(trade.toTransaction());
     // }

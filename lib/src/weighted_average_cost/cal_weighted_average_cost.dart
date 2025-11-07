@@ -31,9 +31,13 @@ WeightedAverageCostResult calWeightedAverageCost(
       // Sell transaction (negative quantity):
       // reduce quantity but keep average cost unchanged
       final sellQuantity = -quantity; // Convert to positive for calculations
-      if (sellQuantity > totalQuantity) {
-        throw ArgumentError('Cannot sell more than current holdings');
-      }
+      // if (sellQuantity > totalQuantity) {
+      //   throw ArgumentError(
+      //     'Cannot sell more than current holdings: '
+      //     '$totalQuantity $sellQuantity '
+      //     '${transaction.price} ${transaction.quantity}',
+      //   );
+      // }
 
       totalCost -= sellQuantity * averageCost;
       totalQuantity -= sellQuantity;
