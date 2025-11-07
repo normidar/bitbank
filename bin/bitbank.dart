@@ -71,6 +71,8 @@ void main(List<String> args) async {
         case 'orders':
           final coinType = CoinType.values.firstWhere((e) => e.name == args[1]);
           final orders = await bitbank().getActiveOrders(coinType: coinType);
+          print('${orders.length} orders');
+          print('--------------------------------');
           for (final order in orders) {
             final executedPrice =
                 (double.parse(order.price) * double.parse(order.executedAmount))
@@ -120,7 +122,7 @@ void main(List<String> args) async {
 
           // 今の価格を確認する
           final price = await Bitbank.ticker(coinType: coinType);
-          final lastPrice = price.data.last;
+          final lastPrice = price.data.buy;
           print('lastPrice: $lastPrice');
 
           const gridCount = 25;
