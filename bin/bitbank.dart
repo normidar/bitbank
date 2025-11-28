@@ -116,7 +116,6 @@ void main(List<String> args) async {
               .freeAmount;
           print('jpyAmount: $jpyAmount');
 
-          // 1 / 40
           final gridAmount = (double.parse(jpyAmount) / 60)
               .truncate()
               .toString();
@@ -144,8 +143,10 @@ void main(List<String> args) async {
             required String price,
             required String moneyAmount,
           }) async {
-            final amount = (double.parse(moneyAmount) / double.parse(price))
-                .toStringAsFixed(4);
+            final amount =
+                ((double.parse(moneyAmount) / double.parse(price)) *
+                        (DateTime.now().day / 30)) // 月末に給料出るので毎日一定の金額を増やして購入する
+                    .toStringAsFixed(4);
             final order = await bitbank().createOrder(
               coinType: coinType,
               side: 'buy',
